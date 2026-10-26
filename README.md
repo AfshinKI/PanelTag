@@ -2,7 +2,9 @@
 
 <p align="center"><strong>Work laptop? Home desktop? That server you keep mixing up?</strong><br>Give each machine a little name badge that stays in sight.</p>
 
-<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.0"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
+<p align="center">Made by <strong>Afshin K.I.</strong></p>
+
+<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.1"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
 
 ## Small badge. Plenty of personality.
 
@@ -11,9 +13,9 @@
 - **Match your desktop.** Follow its light/dark preference, with a GTK-theme fallback on older Ubuntu. This adapts the badge palette rather than copying an exact system accent color.
 - **Style it.** Filled, outline, or text only. Computer, laptop, server, or no icon.
 - **Place it.** Left, middle, or right, with three text sizes.
-- **Forget about it.** Once enabled, it returns at login and remembers your choices.
+- **Forget about it.** It enables itself at login and remembers your choices.
 
-Right-click the badge for its compact settings menu. Left-click and keyboard activation work too. Hover to see the hostname.
+Right-click the badge for its compact settings menu: icon-only choices, circular colors, and separate rows for position, size and style. Left-click and keyboard activation work too. Hover to see the hostname.
 
 **Our favorite starting point:** middle · no icon · medium text · blue outline.
 
@@ -21,25 +23,25 @@ Right-click the badge for its compact settings menu. Left-click and keyboard act
 
 | Desktop | GNOME | Download |
 | --- | --- | --- |
-| Ubuntu 24.04 | 46 | [24.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.0/paneltag_0.2.0_ubuntu24.04_all.deb) |
-| Ubuntu 22.04 | 42 | [22.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.0/paneltag_0.2.0_ubuntu22.04_all.deb) |
-| Ubuntu 20.04 | 3.36 | [20.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.0/paneltag_0.2.0_ubuntu20.04_all.deb) |
+| Ubuntu 24.04 | 46 | [24.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.1/paneltag_0.2.1_ubuntu24.04_all.deb) |
+| Ubuntu 22.04 | 42 | [22.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.1/paneltag_0.2.1_ubuntu22.04_all.deb) |
+| Ubuntu 20.04 | 3.36 | [20.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.1/paneltag_0.2.1_ubuntu20.04_all.deb) |
 
 > **Compatibility preview:** packages target the default GNOME desktop on these releases. Build, schema and package checks pass; live-session testing is still pending, especially on the older releases. KDE, Cinnamon, MATE and other desktops are not supported. Choose by your installed GNOME version if you have customized Ubuntu.
 
 In your download folder, install the matching file. For Ubuntu 24.04:
 
 ```sh
-sudo apt install ./paneltag_0.2.0_ubuntu24.04_all.deb
+sudo apt install ./paneltag_0.2.1_ubuntu24.04_all.deb
 ```
 
-After the first installation, log out and back in so GNOME discovers the extension. Enable it once:
+After the first installation, log out and back in. PanelTag discovers and enables itself in your GNOME session. The **Start at login** switch is on by default; switch it off to prevent the badge returning at your next login. Your current badge stays visible. To enable it manually:
 
 ```sh
 gnome-extensions enable paneltag@afshinki.github.io
 ```
 
-That’s it — PanelTag returns at future logins. Download checksums and extension ZIPs from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.0).
+That’s it — PanelTag returns at future logins. Download checksums and extension ZIPs from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.1).
 
 <details>
 <summary>Taking the badge off?</summary>
@@ -50,9 +52,9 @@ Disable it with `gnome-extensions disable paneltag@afshinki.github.io`, or unins
 
 ## Try before you install
 
-The [interactive website](https://afshinki.github.io/PanelTag/) cycles through Work, Home and Server examples. Click the badge to try your own settings. The menu starts open and the simulated desktop stays the same size when you close it. After 8 seconds closed, the demo cycles through examples, occasionally opening the settings menu. Open the menu to take control, or use Pause demo. The original landscape wallpaper is included as SVG.
+The [interactive website](https://afshinki.github.io/PanelTag/) cycles through Work, Home and Server examples. Click the badge to try your own settings. The menu starts open and the simulated desktop stays the same size when you close it. After 8 seconds closed, the demo cycles through examples, occasionally opening the settings menu. Open the menu to take control, or click the badge to take control. The original landscape wallpaper is included as SVG.
 
-The website is a browser preview, not a running GNOME session. The native app uses compact submenus and a hex color field; the website uses browser controls and a color picker. The example hostname is fictional. Nothing in the demo changes your computer.
+The website is a browser preview, not a running GNOME session. The app and demo use compact icon-button rows. The first color circle follows system appearance; the rainbow circle opens a custom color picker. The example hostname is fictional. Nothing in the demo changes your computer.
 
 ## For the curious 🛠️
 

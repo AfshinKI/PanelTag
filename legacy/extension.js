@@ -4,7 +4,7 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
 class PanelTag {
-    constructor() { this.uuid = ExtensionUtils.getCurrentExtension().metadata.uuid; }
+    constructor() { const ext = ExtensionUtils.getCurrentExtension(); this.uuid = ext.metadata.uuid; this.metadata = ext.metadata; this.path = ext.path; }
     getSettings() { return ExtensionUtils.getSettings('org.gnome.shell.extensions.paneltag'); }
 
     enable() {
@@ -53,18 +53,29 @@ class PanelTag {
         this.refresh();
     }
     choices(title, key, options, integer = false) {
-        const menu = new PopupMenu.PopupSubMenuMenuItem(title);
-        this.button.menu.addMenuItem(menu);
+        const row = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
+        row.add_child(new St.Label({text: title, y_align: Clutter.ActorAlign.CENTER, x_expand: true}));
+        const buttons = new St.BoxLayout({style: 'spacing: 4px;'});
+        row.add_child(buttons);
+        this.button.menu.addMenuItem(row);
+        const symbols = {none:'−',computer:'▣',laptop:'▱',server:'▤',left:'⇤',center:'↔',right:'⇥',filled:'●',outline:'○',text:'T',11:'a',12:'A',14:'A'};
         const items = options.map(([label, value]) => {
-            const item = new PopupMenu.PopupMenuItem(label);
-            item.connect('activate', () => { if (key === 'color') this.settings.set_boolean('follow-theme', false); if (integer) this.settings.set_int(key, value); else this.settings.set_string(key, value); });
-            menu.menu.addMenuItem(item);
+            const item = new St.Button({label: symbols[value] || label, accessible_name: `${title}: ${label}`, can_focus: true});
+            if (key === 'icon' && value !== 'none') item.set_child(new St.Icon({icon_name: {computer:'computer-symbolic',laptop:'computer-laptop-symbolic',server:'network-server-symbolic'}[value], icon_size: 14}));
+            item.connect('clicked', () => integer ? this.settings.set_int(key, value) : this.settings.set_string(key, value));
+            buttons.add_child(item);
             return {item, value, label};
         });
-        this.choiceGroups.push({menu, key, items, integer, title});
+        this.choiceGroups.push({key, items, integer});
     }
     buildMenu() {
         this.choiceGroups = [];
+        const heading = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
+        const wordmark = new St.BoxLayout();
+        wordmark.add_child(new St.Label({text: 'PanelTag', style: 'font-weight: bold;'}));
+        wordmark.add_child(new St.Label({text: '.', style: 'font-weight: bold; color: #3584e4;'}));
+        heading.add_child(wordmark);
+        this.button.menu.addMenuItem(heading);
         const row = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
         row.add_child(new St.Label({text: 'Name', y_align: Clutter.ActorAlign.CENTER}));
         this.entry = new St.Entry({text: this.settings.get_string('label'), can_focus: true, x_expand: true, style: 'width: 150px;'});
@@ -78,28 +89,35 @@ class PanelTag {
         this.hostToggle.connect('toggled', (_item, value) => this.settings.set_boolean('hostname', value));
         this.button.menu.addMenuItem(this.hostToggle);
         this.choices('Icon', 'icon', [['None','none'],['Computer','computer'],['Laptop','laptop'],['Server','server']]);
-        this.themeToggle = new PopupMenu.PopupSwitchMenuItem('Follow system appearance', false);
-        this.themeToggle.connect('toggled', (_item, value) => this.settings.set_boolean('follow-theme', value));
-        this.button.menu.addMenuItem(this.themeToggle);
-        this.choices('Color', 'color', [['Blue','#3584e4'],['Green','#278556'],['Amber','#a65b00'],['Red','#c64640'],['Purple','#8156bb'],['Graphite','#5e5c64']]);
-        const colorRow = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
-        colorRow.add_child(new St.Label({text: 'Custom color', y_align: Clutter.ActorAlign.CENTER}));
-        this.colorEntry = new St.Entry({can_focus: true, hint_text: '#RRGGBB', x_expand: true, style:'width: 110px;'});
-        this.colorEntry.clutter_text.set_max_length(7);
-        this.colorEntry.clutter_text.connect('text-changed', () => {
-            const value = this.colorEntry.get_text();
-            if (!this.syncing && /^#[0-9a-f]{6}$/i.test(value)) { this.settings.set_boolean('follow-theme', false); this.settings.set_string('color', value.toLowerCase()); }
-        });
-        colorRow.add_child(this.colorEntry);
-        this.button.menu.addMenuItem(colorRow);
+        const colors = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
+        const palette = new St.BoxLayout({style: 'spacing: 6px;'});
+        colors.add_child(palette);
+        this.swatches = [];
+        for (const [label, value] of [['System appearance','system'],['Blue','#3584e4'],['Green','#278556'],['Amber','#a65b00'],['Red','#c64640'],['Purple','#8156bb'],['Graphite','#5e5c64'],['Custom color','custom']]) {
+            const button = new St.Button({label: value === 'system' ? '◐' : '', accessible_name: label, can_focus: true});
+            button.connect('clicked', () => {
+                if (value === 'custom') {
+                    const gtk = this.metadata['shell-version'].includes('3.36') ? '3.0' : '4.0';
+                    Gio.Subprocess.new(['gjs', `${this.path}/color-picker.js`, gtk, `${this.path}/schemas`], Gio.SubprocessFlags.NONE);
+                    this.button.menu.close();
+                } else if (value === 'system') this.settings.set_boolean('follow-theme', true);
+                else { this.settings.set_boolean('follow-theme', false); this.settings.set_string('color', value); }
+            });
+            palette.add_child(button);
+            this.swatches.push({button, value});
+        }
+        this.button.menu.addMenuItem(colors);
         this.choices('Position', 'position', [['Left','left'],['Middle','center'],['Right','right']]);
         this.choices('Text size', 'size', [['Small',11],['Medium',12],['Large',14]], true);
         this.choices('Style', 'style', [['Filled','filled'],['Outline','outline'],['Text only','text']]);
         this.button.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this.button.menu.addAction('Reset defaults', () => {
-            for (const key of ['label','hostname','icon','color','position','size','style','follow-theme']) this.settings.reset(key);
+            for (const key of ['label','hostname','icon','color','position','size','style','follow-theme','start-at-login']) this.settings.reset(key);
         });
-        this.button.menu.addMenuItem(new PopupMenu.PopupMenuItem('Starts automatically at login', {reactive: false}));
+        this.startToggle = new PopupMenu.PopupSwitchMenuItem('Start at login', true);
+        this.startToggle.connect('toggled', (_item, value) => this.settings.set_boolean('start-at-login', value));
+        this.button.menu.addMenuItem(this.startToggle);
+        this.button.menu.addMenuItem(new PopupMenu.PopupMenuItem('Afshin K.I.', {reactive: false, can_focus: false}));
     }
     refresh() {
         this.syncing = true;
@@ -113,8 +131,7 @@ class PanelTag {
         this.hostToggle.setToggleState(s.get_boolean('hostname'));
         let color = s.get_string('color');
         if (!/^#[0-9a-f]{6}$/i.test(color)) color = '#3584e4';
-        this.colorEntry.set_text(color);
-        this.themeToggle.setToggleState(s.get_boolean('follow-theme'));
+        this.startToggle.setToggleState(s.get_boolean('start-at-login'));
         if (s.get_boolean('follow-theme')) {
             const schema = this.interfaceSettings.settings_schema;
             const preference = schema.has_key('color-scheme') ? this.interfaceSettings.get_string('color-scheme') : '';
@@ -139,8 +156,15 @@ class PanelTag {
         }
         for (const group of this.choiceGroups) {
             const value = group.integer ? s.get_int(group.key) : s.get_string(group.key);
-            group.menu.label.text = `${group.title}: ${(group.items.find(x => x.value === value) || {label:value}).label}`;
-            for (const entry of group.items) entry.item.setOrnament(entry.value === value ? PopupMenu.Ornament.DOT : PopupMenu.Ornament.NONE);
+            for (const entry of group.items) {
+                entry.item.set_style(`border-radius: 7px; padding: 4px 10px; font-size: ${group.integer ? entry.value : 14}px; background-color: ${entry.value === value ? 'rgba(100,140,235,0.35)' : 'rgba(128,128,128,0.15)'}; border: 1px solid ${entry.value === value ? '#7399e8' : 'transparent'};`);
+            }
+        }
+        for (const swatch of this.swatches) {
+            const system = swatch.value === 'system', custom = swatch.value === 'custom';
+            const preset = ['#3584e4','#278556','#a65b00','#c64640','#8156bb','#5e5c64'].includes(s.get_string('color'));
+            const active = system ? s.get_boolean('follow-theme') : !s.get_boolean('follow-theme') && (custom ? !preset : s.get_string('color') === swatch.value);
+            swatch.button.set_style(`width: 22px; height: 22px; padding: 0; border-radius: 12px; font-size: 18px; border: 2px solid ${active ? '#ffffff' : 'rgba(128,128,128,0.5)'}; background-color: ${system || custom ? 'transparent' : swatch.value}; ${custom ? `background-image: url("${this.path}/color-wheel.svg"); background-size: contain;` : ''}`);
         }
         this.syncing = false;
     }
@@ -148,7 +172,8 @@ class PanelTag {
         if (this.interfaceChanged) this.interfaceSettings.disconnect(this.interfaceChanged);
         this.interfaceChanged = null;
         this.interfaceSettings = null;
-        this.themeToggle = null;
+        this.startToggle = null;
+        this.swatches = null;
         if (this.changed) this.settings.disconnect(this.changed);
         if (this.hoverTimer) GLib.source_remove(this.hoverTimer);
         this.hoverTimer = 0;
@@ -158,7 +183,7 @@ class PanelTag {
         this.button = null;
         this.settings = null;
         this.choiceGroups = null;
-        this.entry = this.colorEntry = this.hostToggle = this.icon = this.label = this.box = null;
+        this.entry = this.hostToggle = this.icon = this.label = this.box = null;
         this.position = null;
         this.changed = null;
     }

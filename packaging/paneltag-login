@@ -1,0 +1,15 @@
+#!/bin/sh
+# Runs in the user's desktop session, never from a root package hook.
+uuid=paneltag@afshinki.github.io
+schemas=/usr/share/gnome-shell/extensions/$uuid/schemas
+setting=$(gsettings --schemadir "$schemas" get org.gnome.shell.extensions.paneltag start-at-login 2>/dev/null) || exit 0
+if [ "$setting" != true ]; then
+    gnome-extensions disable "$uuid" >/dev/null 2>&1
+    exit 0
+fi
+# Give the session time to register newly installed extensions.
+for attempt in 1 2 3 4 5; do
+    gnome-extensions enable "$uuid" >/dev/null 2>&1 && exit 0
+    sleep 2
+done
+exit 0

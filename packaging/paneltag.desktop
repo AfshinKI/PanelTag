@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=PanelTag
+Comment=Restore your PanelTag badge at login
+Exec=/usr/bin/paneltag-login
+OnlyShowIn=GNOME;
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Phase=Applications
+Icon=paneltag

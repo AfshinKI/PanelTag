@@ -14,7 +14,15 @@ for target in '20.04:3.36:3.37:legacy' '22.04:42:43:legacy' '24.04:46:47:extensi
   ext="$pkg/usr/share/gnome-shell/extensions/$uuid"
   mkdir -p "$ext/schemas" "$pkg/DEBIAN" "$pkg/usr/share/doc/paneltag"
   cp "$source/extension.js" "$ext/"
+  cp extension/color-picker.js extension/color-wheel.svg "$ext/"
+  mkdir -p "$pkg/etc/xdg/autostart" "$pkg/usr/bin"
+  cp packaging/paneltag.desktop "$pkg/etc/xdg/autostart/"
+  install -m 755 packaging/paneltag-login "$pkg/usr/bin/paneltag-login"
+  gtk=4.0
+  if [ "$ubuntu" = 20.04 ]; then gtk=3.0; fi
   cp extension/schemas/*.xml "$ext/schemas/"
+  mkdir -p "$pkg/usr/share/icons/hicolor/scalable/apps"
+  cp site/paneltag.svg "$pkg/usr/share/icons/hicolor/scalable/apps/paneltag.svg"
   cp LICENSE "$pkg/usr/share/doc/paneltag/copyright"
   python3 - "$shell" "$ext/metadata.json" <<'PY'
 import json,sys
@@ -27,7 +35,7 @@ Package: paneltag
 Version: $version
 Architecture: all
 Maintainer: AfshinKI <noreply@github.com>
-Depends: gnome-shell (>= $shell), gnome-shell (<< $ceiling)
+Depends: gnome-shell (>= $shell), gnome-shell (<< $ceiling), gjs, gir1.2-gtk-$gtk
 Section: gnome
 Priority: optional
 Homepage: https://github.com/AfshinKI/PanelTag
