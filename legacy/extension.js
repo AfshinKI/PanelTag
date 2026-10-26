@@ -49,6 +49,8 @@ class PanelTag {
             this.tooltip.hide();
         });
         this.buildMenu();
+        this.themeContext = St.ThemeContext.get_for_stage(global.stage);
+        this.themeChanged = this.themeContext.connect('changed', () => this.refresh());
         this.changed = this.settings.connect('changed', () => this.refresh());
         this.refresh();
     }
@@ -145,6 +147,10 @@ class PanelTag {
             const preference = schema.has_key('color-scheme') ? this.interfaceSettings.get_string('color-scheme') : '';
             const dark = preference === 'prefer-dark' || (preference !== 'prefer-light' && this.interfaceSettings.get_string('gtk-theme').toLowerCase().includes('dark'));
             color = dark ? '#b4c5ff' : '#628ce8';
+            // Use the theme's own selection accent, including Ubuntu's Yaru variants.
+            const [found, accent] = this.entry.get_theme_node().lookup_color('selection-background-color', true);
+            if (found && accent.alpha > 0)
+                color = '#' + [accent.red, accent.green, accent.blue].map(c => Math.round(c).toString(16).padStart(2, '0')).join('');
         }
         const icon = s.get_string('icon');
         this.icon.visible = icon !== 'none';
@@ -177,6 +183,9 @@ class PanelTag {
         this.syncing = false;
     }
     disable() {
+        if (this.themeChanged) this.themeContext.disconnect(this.themeChanged);
+        this.themeChanged = 0;
+        this.themeContext = null;
         if (this.interfaceChanged) this.interfaceSettings.disconnect(this.interfaceChanged);
         this.interfaceChanged = null;
         this.interfaceSettings = null;

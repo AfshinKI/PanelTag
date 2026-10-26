@@ -6,6 +6,6 @@
 <key name="position" type="s"><choices><choice value="left"/><choice value="center"/><choice value="right"/></choices><default>'center'</default></key>
 <key name="size" type="i"><range min="11" max="14"/><default>12</default></key>
 <key name="style" type="s"><choices><choice value="filled"/><choice value="outline"/><choice value="text"/></choices><default>'outline'</default></key>
-<key name="follow-theme" type="b"><default>false</default></key>
+<key name="follow-theme" type="b"><default>true</default></key>
 <key name="start-at-login" type="b"><default>true</default></key>
 </schema></schemalist>
