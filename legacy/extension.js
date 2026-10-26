@@ -54,13 +54,13 @@ class PanelTag {
     }
     choices(title, key, options, integer = false) {
         const row = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
-        row.add_child(new St.Label({text: title, y_align: Clutter.ActorAlign.CENTER, x_expand: true}));
-        const buttons = new St.BoxLayout({style: 'spacing: 4px;'});
+        if (key === 'icon') row.add_child(new St.Label({text: title, y_align: Clutter.ActorAlign.CENTER, x_expand: true}));
+        const buttons = new St.BoxLayout({x_expand: true, style: 'spacing: 4px;'});
         row.add_child(buttons);
         this.button.menu.addMenuItem(row);
         const symbols = {none:'−',computer:'▣',laptop:'▱',server:'▤',left:'⇤',center:'↔',right:'⇥',filled:'●',outline:'○',text:'T',11:'a',12:'A',14:'A'};
         const items = options.map(([label, value]) => {
-            const item = new St.Button({label: symbols[value] || label, accessible_name: `${title}: ${label}`, can_focus: true});
+            const item = new St.Button({label: key === 'icon' ? (symbols[value] || label) : `${symbols[value]} ${label}`, x_expand: true, accessible_name: `${title}: ${label}`, can_focus: true});
             if (key === 'icon' && value !== 'none') item.set_child(new St.Icon({icon_name: {computer:'computer-symbolic',laptop:'computer-laptop-symbolic',server:'network-server-symbolic'}[value], icon_size: 14}));
             item.connect('clicked', () => integer ? this.settings.set_int(key, value) : this.settings.set_string(key, value));
             buttons.add_child(item);
@@ -117,18 +117,14 @@ class PanelTag {
         this.startToggle.connect('toggled', (_item, value) => this.settings.set_boolean('start-at-login', value));
         this.startToggle.insert_child_at_index(new St.Icon({icon_name: 'system-shutdown-symbolic', icon_size: 14, y_align: Clutter.ActorAlign.CENTER}), 0);
         this.button.menu.addMenuItem(this.startToggle);
-        const footer = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
-        footer.add_child(new St.Icon({icon_name: 'computer-symbolic', icon_size: 16, style: 'color: #7399e8;', y_align: Clutter.ActorAlign.CENTER}));
-        const credit = new St.BoxLayout({vertical: true, x_expand: true});
-        credit.add_child(new St.Label({text: 'Designed by', style: 'font-size: 10px; color: #92909b;'}));
-        credit.add_child(new St.Label({text: 'Afshin K.I.', style: 'font-size: 12px;'}));
-        footer.add_child(credit);
         const reset = new St.Button({accessible_name: 'Reset defaults', can_focus: true, style: 'border-radius: 10px; padding: 8px; background-color: rgba(128,128,128,0.15);'});
         reset.set_child(new St.Icon({icon_name: 'edit-undo-symbolic', icon_size: 16}));
         reset.connect('clicked', () => {
             for (const key of ['label','hostname','icon','color','position','size','style','follow-theme','start-at-login']) this.settings.reset(key);
         });
-        footer.add_child(reset);
+        this.startToggle.add_child(reset);
+        const footer = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
+        footer.add_child(new St.Label({text: 'Designed by Afshin K.I.', x_expand: true, x_align: Clutter.ActorAlign.CENTER, style: 'font-size: 10px; color: #92909b;'}));
         this.button.menu.addMenuItem(footer);
     }
     refresh() {
@@ -169,7 +165,7 @@ class PanelTag {
         for (const group of this.choiceGroups) {
             const value = group.integer ? s.get_int(group.key) : s.get_string(group.key);
             for (const entry of group.items) {
-                entry.item.set_style(`border-radius: 7px; padding: 4px 10px; font-size: ${group.integer ? entry.value : 14}px; background-color: ${entry.value === value ? 'rgba(100,140,235,0.35)' : 'rgba(128,128,128,0.15)'}; border: 1px solid ${entry.value === value ? '#7399e8' : 'transparent'};`);
+                entry.item.set_style(`border-radius: 7px; padding: 4px 10px; font-size: ${group.integer ? entry.value : (group.key === 'icon' ? 14 : 11)}px; background-color: ${entry.value === value ? 'rgba(100,140,235,0.35)' : 'rgba(128,128,128,0.15)'}; border: 1px solid ${entry.value === value ? '#7399e8' : 'transparent'};`);
             }
         }
         for (const swatch of this.swatches) {

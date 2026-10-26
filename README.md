@@ -4,7 +4,7 @@
 
 <p align="center">Designed by <strong>Afshin K.I.</strong></p>
 
-<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.2"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
+<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.3"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
 
 ## Small badge. Plenty of personality.
 
@@ -23,16 +23,16 @@ Right-click the badge for its compact settings menu: icon-only choices, circular
 
 | Desktop | GNOME | Download |
 | --- | --- | --- |
-| Ubuntu 24.04 | 46 | [24.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.2/paneltag_0.2.2_ubuntu24.04_all.deb) |
-| Ubuntu 22.04 | 42 | [22.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.2/paneltag_0.2.2_ubuntu22.04_all.deb) |
-| Ubuntu 20.04 | 3.36 | [20.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.2/paneltag_0.2.2_ubuntu20.04_all.deb) |
+| Ubuntu 24.04 | 46 | [24.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.3/paneltag_0.2.3_ubuntu24.04_all.deb) |
+| Ubuntu 22.04 | 42 | [22.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.3/paneltag_0.2.3_ubuntu22.04_all.deb) |
+| Ubuntu 20.04 | 3.36 | [20.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.3/paneltag_0.2.3_ubuntu20.04_all.deb) |
 
 > **Compatibility preview:** packages target the default GNOME desktop on these releases. Build, schema and package checks pass; live-session testing is still pending, especially on the older releases. KDE, Cinnamon, MATE and other desktops are not supported. Choose by your installed GNOME version if you have customized Ubuntu.
 
 In your download folder, install the matching file. For Ubuntu 24.04:
 
 ```sh
-sudo apt install ./paneltag_0.2.2_ubuntu24.04_all.deb
+sudo apt install ./paneltag_0.2.3_ubuntu24.04_all.deb
 ```
 
 After the first installation, log out and back in. PanelTag discovers and enables itself in your GNOME session. The **Start at login** switch is on by default; switch it off to prevent the badge returning at your next login. Your current badge stays visible. To enable it manually:
@@ -41,7 +41,7 @@ After the first installation, log out and back in. PanelTag discovers and enable
 gnome-extensions enable paneltag@afshinki.github.io
 ```
 
-That’s it — PanelTag returns at future logins. Download checksums and extension ZIPs from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.2).
+That’s it — PanelTag returns at future logins. Download checksums and extension ZIPs from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.3).
 
 <details>
 <summary>Taking the badge off?</summary>
