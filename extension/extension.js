@@ -115,13 +115,23 @@ export default class PanelTag extends Extension {
         this.choices('Text size', 'size', [['Small',11],['Medium',12],['Large',14]], true);
         this.choices('Style', 'style', [['Filled','filled'],['Outline','outline'],['Text only','text']]);
         this.button.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-        this.button.menu.addAction('Reset defaults', () => {
-            for (const key of ['label','hostname','icon','color','position','size','style','follow-theme','start-at-login']) this.settings.reset(key);
-        });
         this.startToggle = new PopupMenu.PopupSwitchMenuItem('Start at login', true);
         this.startToggle.connect('toggled', (_item, value) => this.settings.set_boolean('start-at-login', value));
+        this.startToggle.insert_child_at_index(new St.Icon({icon_name: 'system-shutdown-symbolic', icon_size: 14, y_align: Clutter.ActorAlign.CENTER}), 0);
         this.button.menu.addMenuItem(this.startToggle);
-        this.button.menu.addMenuItem(new PopupMenu.PopupMenuItem('Designed by Afshin K.I.', {reactive: false, can_focus: false}));
+        const footer = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
+        footer.add_child(new St.Icon({icon_name: 'computer-symbolic', icon_size: 16, style: 'color: #7399e8;', y_align: Clutter.ActorAlign.CENTER}));
+        const credit = new St.BoxLayout({vertical: true, x_expand: true});
+        credit.add_child(new St.Label({text: 'Designed by', style: 'font-size: 10px; color: #92909b;'}));
+        credit.add_child(new St.Label({text: 'Afshin K.I.', style: 'font-size: 12px;'}));
+        footer.add_child(credit);
+        const reset = new St.Button({accessible_name: 'Reset defaults', can_focus: true, style: 'border-radius: 10px; padding: 8px; background-color: rgba(128,128,128,0.15);'});
+        reset.set_child(new St.Icon({icon_name: 'edit-undo-symbolic', icon_size: 16}));
+        reset.connect('clicked', () => {
+            for (const key of ['label','hostname','icon','color','position','size','style','follow-theme','start-at-login']) this.settings.reset(key);
+        });
+        footer.add_child(reset);
+        this.button.menu.addMenuItem(footer);
     }
     refresh() {
         this.syncing = true;
