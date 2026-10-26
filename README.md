@@ -2,13 +2,13 @@
 
 <p align="center"><strong>Work laptop? Home desktop? That server you keep mixing up?</strong><br>Give each machine a little name badge that stays in sight.</p>
 
-<p align="center">Made by <strong>Afshin K.I.</strong></p>
+<p align="center">Designed by <strong>Afshin K.I.</strong></p>
 
 <p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.1"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
 
 ## Small badge. Plenty of personality.
 
-- **Name it.** Work, Home, Lab — or your computer’s hostname.
+- **Name it.** Work, Home, Lab — or tap the small computer button beside the name field to use your hostname.
 - **Color it.** Choose a preset or your own hex color.
 - **Match your desktop.** Follow its light/dark preference, with a GTK-theme fallback on older Ubuntu. This adapts the badge palette rather than copying an exact system accent color.
 - **Style it.** Filled, outline, or text only. Computer, laptop, server, or no icon.

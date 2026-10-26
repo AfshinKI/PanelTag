@@ -70,6 +70,7 @@ class PanelTag {
     }
     buildMenu() {
         this.choiceGroups = [];
+        this.button.menu.box.set_style("padding: 8px; spacing: 2px; border-radius: 16px; font-size: 12px;");
         const heading = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
         const wordmark = new St.BoxLayout();
         wordmark.add_child(new St.Label({text: 'PanelTag', style: 'font-weight: bold;'}));
@@ -85,9 +86,10 @@ class PanelTag {
         });
         row.add_child(this.entry);
         this.button.menu.addMenuItem(row);
-        this.hostToggle = new PopupMenu.PopupSwitchMenuItem('Use computer name', false);
-        this.hostToggle.connect('toggled', (_item, value) => this.settings.set_boolean('hostname', value));
-        this.button.menu.addMenuItem(this.hostToggle);
+        this.hostToggle = new St.Button({accessible_name: 'Use computer name', can_focus: true});
+        this.hostToggle.set_child(new St.Icon({icon_name: 'computer-symbolic', icon_size: 14}));
+        this.hostToggle.connect('clicked', () => this.settings.set_boolean('hostname', !this.settings.get_boolean('hostname')));
+        row.add_child(this.hostToggle);
         this.choices('Icon', 'icon', [['None','none'],['Computer','computer'],['Laptop','laptop'],['Server','server']]);
         const colors = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
         const palette = new St.BoxLayout({style: 'spacing: 6px;'});
@@ -117,7 +119,7 @@ class PanelTag {
         this.startToggle = new PopupMenu.PopupSwitchMenuItem('Start at login', true);
         this.startToggle.connect('toggled', (_item, value) => this.settings.set_boolean('start-at-login', value));
         this.button.menu.addMenuItem(this.startToggle);
-        this.button.menu.addMenuItem(new PopupMenu.PopupMenuItem('Afshin K.I.', {reactive: false, can_focus: false}));
+        this.button.menu.addMenuItem(new PopupMenu.PopupMenuItem('Designed by Afshin K.I.', {reactive: false, can_focus: false}));
     }
     refresh() {
         this.syncing = true;
@@ -125,10 +127,10 @@ class PanelTag {
         const name = (s.get_boolean('hostname') ? GLib.get_host_name() : s.get_string('label').trim()) || 'Work';
         this.label.text = name;
         this.button.accessible_name = `${name} — ${GLib.get_host_name()} — PanelTag settings`;
-        this.entry.set_text(s.get_string('label'));
+        this.entry.set_text(s.get_boolean('hostname') ? GLib.get_host_name() : s.get_string('label'));
         this.entry.reactive = !s.get_boolean('hostname');
         this.entry.clutter_text.editable = !s.get_boolean('hostname');
-        this.hostToggle.setToggleState(s.get_boolean('hostname'));
+        this.hostToggle.set_style(`border-radius: 8px; padding: 7px; background-color: ${s.get_boolean('hostname') ? 'rgba(100,140,235,0.35)' : 'rgba(128,128,128,0.15)'};`);
         let color = s.get_string('color');
         if (!/^#[0-9a-f]{6}$/i.test(color)) color = '#3584e4';
         this.startToggle.setToggleState(s.get_boolean('start-at-login'));
