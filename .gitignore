@@ -1,2 +1,9 @@
 dist/
 *.compiled
+
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.openai/

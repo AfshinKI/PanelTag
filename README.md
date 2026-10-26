@@ -44,4 +44,12 @@ Schema compilation, JavaScript syntax, package construction and package contents
 
 ## Website
 
-Interactive preview opens with settings visible. Supports right-click, keyboard activation, Escape and outside-click dismissal. The hostname displayed on the website is example data. Hosted preview uses Sites; `site/index.html` is also deployable to any static host.
+Interactive preview opens with settings visible. Supports right-click, keyboard activation, Escape and outside-click dismissal. The hostname displayed on the website is example data. Website: https://afshinki.github.io/PanelTag/ — published by GitHub Pages from `site/` using `.github/workflows/pages.yml`. It is a static site with no account, backend, analytics, external scripts, or API keys. The demo runs entirely in your browser.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+## Credentials
+
+No credentials are needed to run the app or website. Workflows use GitHub’s automatically provided short-lived token, never a committed personal token. Do not commit `.env` files, private keys, or hosting credentials.
