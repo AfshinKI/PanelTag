@@ -1,0 +1,9 @@
+<schemalist><schema id="org.gnome.shell.extensions.paneltag" path="/org/gnome/shell/extensions/paneltag/">
+<key name="label" type="s"><default>'Work'</default></key>
+<key name="hostname" type="b"><default>false</default></key>
+<key name="color" type="s"><default>'#3584e4'</default></key>
+<key name="icon" type="s"><choices><choice value="none"/><choice value="computer"/><choice value="laptop"/><choice value="server"/></choices><default>'none'</default></key>
+<key name="position" type="s"><choices><choice value="left"/><choice value="center"/><choice value="right"/></choices><default>'center'</default></key>
+<key name="size" type="i"><range min="11" max="14"/><default>12</default></key>
+<key name="style" type="s"><choices><choice value="filled"/><choice value="outline"/><choice value="text"/></choices><default>'outline'</default></key>
+</schema></schemalist>
