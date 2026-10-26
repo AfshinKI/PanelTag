@@ -7,7 +7,7 @@ A small customizable GNOME top-panel badge. Defaults: Middle, no icon, Medium te
 Target: Ubuntu 24.04 with GNOME Shell 46. Download the `.deb` from [Releases](https://github.com/AfshinKI/PanelTag/releases), then:
 
 ```sh
-sudo apt install ./paneltag_0.1.0_all.deb
+sudo apt install ./paneltag_0.1.1_all.deb
 ```
 
 Log out and log in after the first installation so GNOME discovers the extension. Then run:
@@ -36,7 +36,7 @@ Outputs a `.deb`, extension ZIP, and SHA256SUMS under `dist/`. GNOME extension s
 
 ## Release flow
 
-Push changes through review to `main`. CI validates JavaScript and builds packages. Set `version-name` and increment `version` in `extension/metadata.json`, update the website install filename, commit, then push the matching `vX.Y.Z` tag. The tag workflow builds and publishes a GitHub prerelease with packages and checksums. Promote a release only after live-session testing.
+Push changes through review to `main`. CI validates JavaScript and builds packages. Set `version-name` and increment `version` in `extension/metadata.json`, update the website install filename, commit and merge to `main`. CI creates the matching `vX.Y.Z` tag and publishes a prerelease only if that version does not already exist. Explicit matching version tags also publish packages and checksums. Promote a release only after live-session testing.
 
 ## Validation status
 
