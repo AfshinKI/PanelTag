@@ -19,8 +19,9 @@ export default class PanelTag extends Extension {
         this.box.add_child(this.label);
         this.button.add_child(this.box);
         Main.panel.addToStatusArea(this.uuid, this.button, 0, this.settings.get_string('position'));
-        this.button.connect('button-press-event', (_actor, event) => {
-            if (event.get_button() === 3) {
+        this.button.connect('key-press-event', (_actor, event) => {
+            const key = event.get_key_symbol();
+            if ([Clutter.KEY_Return, Clutter.KEY_space, Clutter.KEY_Menu].includes(key)) {
                 this.button.menu.toggle();
                 return Clutter.EVENT_STOP;
             }
