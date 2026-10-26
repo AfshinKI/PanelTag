@@ -1,3 +1,4 @@
+import Gio from 'gi://Gio';
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
 import St from 'gi://St';
@@ -10,6 +11,8 @@ import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 export default class PanelTag extends Extension {
     enable() {
         this.settings = this.getSettings();
+        this.interfaceSettings = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
+        this.interfaceChanged = this.interfaceSettings.connect('changed', () => this.refresh());
         this.button = new PanelMenu.Button(0.5, 'PanelTag');
         this.box = new St.BoxLayout({y_align: Clutter.ActorAlign.CENTER, style_class: 'paneltag-badge'});
         this.icon = new St.Icon({icon_size: 12, y_align: Clutter.ActorAlign.CENTER});
@@ -56,7 +59,7 @@ export default class PanelTag extends Extension {
         this.button.menu.addMenuItem(menu);
         const items = options.map(([label, value]) => {
             const item = new PopupMenu.PopupMenuItem(label);
-            item.connect('activate', () => integer ? this.settings.set_int(key, value) : this.settings.set_string(key, value));
+            item.connect('activate', () => { if (key === 'color') this.settings.set_boolean('follow-theme', false); if (integer) this.settings.set_int(key, value); else this.settings.set_string(key, value); });
             menu.menu.addMenuItem(item);
             return {item, value, label};
         });
@@ -77,6 +80,9 @@ export default class PanelTag extends Extension {
         this.hostToggle.connect('toggled', (_item, value) => this.settings.set_boolean('hostname', value));
         this.button.menu.addMenuItem(this.hostToggle);
         this.choices('Icon', 'icon', [['None','none'],['Computer','computer'],['Laptop','laptop'],['Server','server']]);
+        this.themeToggle = new PopupMenu.PopupSwitchMenuItem('Follow system appearance', false);
+        this.themeToggle.connect('toggled', (_item, value) => this.settings.set_boolean('follow-theme', value));
+        this.button.menu.addMenuItem(this.themeToggle);
         this.choices('Color', 'color', [['Blue','#3584e4'],['Green','#278556'],['Amber','#a65b00'],['Red','#c64640'],['Purple','#8156bb'],['Graphite','#5e5c64']]);
         const colorRow = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
         colorRow.add_child(new St.Label({text: 'Custom color', y_align: Clutter.ActorAlign.CENTER}));
@@ -84,7 +90,7 @@ export default class PanelTag extends Extension {
         this.colorEntry.clutter_text.set_max_length(7);
         this.colorEntry.clutter_text.connect('text-changed', () => {
             const value = this.colorEntry.get_text();
-            if (!this.syncing && /^#[0-9a-f]{6}$/i.test(value)) this.settings.set_string('color', value.toLowerCase());
+            if (!this.syncing && /^#[0-9a-f]{6}$/i.test(value)) { this.settings.set_boolean('follow-theme', false); this.settings.set_string('color', value.toLowerCase()); }
         });
         colorRow.add_child(this.colorEntry);
         this.button.menu.addMenuItem(colorRow);
@@ -93,7 +99,7 @@ export default class PanelTag extends Extension {
         this.choices('Style', 'style', [['Filled','filled'],['Outline','outline'],['Text only','text']]);
         this.button.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this.button.menu.addAction('Reset defaults', () => {
-            for (const key of ['label','hostname','icon','color','position','size','style']) this.settings.reset(key);
+            for (const key of ['label','hostname','icon','color','position','size','style','follow-theme']) this.settings.reset(key);
         });
         this.button.menu.addMenuItem(new PopupMenu.PopupMenuItem('Starts automatically at login', {reactive: false}));
     }
@@ -110,6 +116,13 @@ export default class PanelTag extends Extension {
         let color = s.get_string('color');
         if (!/^#[0-9a-f]{6}$/i.test(color)) color = '#3584e4';
         this.colorEntry.set_text(color);
+        this.themeToggle.setToggleState(s.get_boolean('follow-theme'));
+        if (s.get_boolean('follow-theme')) {
+            const schema = this.interfaceSettings.settings_schema;
+            const preference = schema.has_key('color-scheme') ? this.interfaceSettings.get_string('color-scheme') : '';
+            const dark = preference === 'prefer-dark' || (preference !== 'prefer-light' && this.interfaceSettings.get_string('gtk-theme').toLowerCase().includes('dark'));
+            color = dark ? '#b4c5ff' : '#628ce8';
+        }
         const icon = s.get_string('icon');
         this.icon.visible = icon !== 'none';
         this.icon.icon_name = {computer:'computer-symbolic', laptop:'computer-laptop-symbolic', server:'network-server-symbolic'}[icon] || 'computer-symbolic';
@@ -134,6 +147,10 @@ export default class PanelTag extends Extension {
         this.syncing = false;
     }
     disable() {
+        if (this.interfaceChanged) this.interfaceSettings.disconnect(this.interfaceChanged);
+        this.interfaceChanged = null;
+        this.interfaceSettings = null;
+        this.themeToggle = null;
         if (this.changed) this.settings.disconnect(this.changed);
         if (this.hoverTimer) GLib.source_remove(this.hoverTimer);
         this.hoverTimer = 0;

@@ -1,55 +1,73 @@
-# PanelTag
+<p align="center"><img src="docs/banner.svg" alt="PanelTag — a little label, the right machine. Work, Home and Server badges in a Linux panel." width="1000"></p>
 
-A small customizable GNOME top-panel badge. Defaults: Middle, no icon, Medium text, blue outline.
+<p align="center"><strong>Work laptop? Home desktop? That server you keep mixing up?</strong><br>Give each machine a little name badge that stays in sight.</p>
 
-## Install the prerelease
+<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.0"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
 
-Target: Ubuntu 24.04 with GNOME Shell 46. Download the `.deb` from [Releases](https://github.com/AfshinKI/PanelTag/releases), then:
+## Small badge. Plenty of personality.
+
+- **Name it.** Work, Home, Lab — or your computer’s hostname.
+- **Color it.** Choose a preset or your own hex color.
+- **Match your desktop.** Follow its light/dark preference, with a GTK-theme fallback on older Ubuntu. This adapts the badge palette rather than copying an exact system accent color.
+- **Style it.** Filled, outline, or text only. Computer, laptop, server, or no icon.
+- **Place it.** Left, middle, or right, with three text sizes.
+- **Forget about it.** Once enabled, it returns at login and remembers your choices.
+
+Right-click the badge for its compact settings menu. Left-click and keyboard activation work too. Hover to see the hostname.
+
+**Our favorite starting point:** middle · no icon · medium text · blue outline.
+
+## Pick your Ubuntu
+
+| Desktop | GNOME | Download |
+| --- | --- | --- |
+| Ubuntu 24.04 | 46 | [24.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.0/paneltag_0.2.0_ubuntu24.04_all.deb) |
+| Ubuntu 22.04 | 42 | [22.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.0/paneltag_0.2.0_ubuntu22.04_all.deb) |
+| Ubuntu 20.04 | 3.36 | [20.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.0/paneltag_0.2.0_ubuntu20.04_all.deb) |
+
+> **Compatibility preview:** packages target the default GNOME desktop on these releases. Build, schema and package checks pass; live-session testing is still pending, especially on the older releases. KDE, Cinnamon, MATE and other desktops are not supported. Choose by your installed GNOME version if you have customized Ubuntu.
+
+In your download folder, install the matching file. For Ubuntu 24.04:
 
 ```sh
-sudo apt install ./paneltag_0.1.1_all.deb
+sudo apt install ./paneltag_0.2.0_ubuntu24.04_all.deb
 ```
 
-Log out and log in after the first installation so GNOME discovers the extension. Then run:
+After the first installation, log out and back in so GNOME discovers the extension. Enable it once:
 
 ```sh
 gnome-extensions enable paneltag@afshinki.github.io
 ```
 
-The enabled extension starts on subsequent logins. The package does not alter session settings as root. Remove with `sudo apt remove paneltag`; disable with `gnome-extensions disable paneltag@afshinki.github.io`.
+That’s it — PanelTag returns at future logins. Download checksums and extension ZIPs from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.0).
 
-## Features
+<details>
+<summary>Taking the badge off?</summary>
 
-Right-click (or left-click) the badge for its compact native menu. Set a custom name or hostname, icon (None/Computer/Laptop/Server), preset or hex color, Left/Middle/Right position, Small/Medium/Large text, and Filled/Outline/Text-only style. Reset restores the defaults. Hover shows the hostname. GSettings saves choices between sessions. Text is vertically centered at every size.
+Disable it with `gnome-extensions disable paneltag@afshinki.github.io`, or uninstall with `sudo apt remove paneltag`. Settings are stored per user through GSettings.
 
-The native menu uses compact submenus and a hex color entry; the website uses browser controls and a color picker. Website settings are illustrative and do not change your desktop.
+</details>
 
-## Build
+## Try before you install
 
-Requires Python 3, GLib schema compiler, dpkg-deb and zip:
+The [interactive website](https://afshinki.github.io/PanelTag/) cycles through Work, Home and Server examples. Click the badge to try your own settings. The menu starts open and the simulated desktop stays the same size when you close it. After 8 seconds closed, the demo cycles through examples, occasionally opening the settings menu. Open the menu to take control, or use Pause demo. The original landscape wallpaper is included as SVG.
+
+The website is a browser preview, not a running GNOME session. The native app uses compact submenus and a hex color field; the website uses browser controls and a color picker. The example hostname is fictional. Nothing in the demo changes your computer.
+
+## For the curious 🛠️
+
+Build with Python 3, GLib tools, dpkg-deb and zip:
 
 ```sh
 bash scripts/build.sh
 ```
 
-Outputs a `.deb`, extension ZIP, and SHA256SUMS under `dist/`. GNOME extension source lives in `extension/`. Website source is `site/index.html`; `design/index.html` retains the design prototype.
+This builds three version-specific `.deb` files and extension ZIPs, plus checksums under `dist/`. The legacy implementation in `legacy/` supports GNOME’s pre-45 loader; `extension/` uses the modern ES-module loader. Package dependencies prevent installing the wrong build for the running GNOME version.
 
-## Release flow
+To release: update both version fields in `extension/metadata.json`, update download links, and merge to `main`. CI builds packages, creates the matching version tag and publishes a prerelease if it does not exist. Explicit version tags also work. Promote releases after live desktop testing.
 
-Push changes through review to `main`. CI validates JavaScript and builds packages. Set `version-name` and increment `version` in `extension/metadata.json`, update the website install filename, commit and merge to `main`. CI creates the matching `vX.Y.Z` tag and publishes a prerelease only if that version does not already exist. Explicit matching version tags also publish packages and checksums. Promote a release only after live-session testing.
+## Open source, no mystery ingredients
 
-## Validation status
+[MIT licensed](LICENSE). No account, API keys, analytics, external scripts, or backend are needed. Settings stay local. GitHub Pages publishes `site/`; GitHub Actions uses its automatic short-lived token, not a committed personal token. Credential files are ignored by Git.
 
-Schema compilation, JavaScript syntax, package construction and package contents are checked locally. Live GNOME enable/disable, right-click interaction, login persistence, and clean-machine installation/upgrade/removal still require desktop testing. GNOME versions beyond 46 are deliberately not advertised.
-
-## Website
-
-Interactive preview opens with settings visible. Supports right-click, keyboard activation, Escape and outside-click dismissal. The hostname displayed on the website is example data. Website: https://afshinki.github.io/PanelTag/ — published by GitHub Pages from `site/` using `.github/workflows/pages.yml`. It is a static site with no account, backend, analytics, external scripts, or API keys. The demo runs entirely in your browser.
-
-## License
-
-MIT — see [LICENSE](LICENSE).
-
-## Credentials
-
-No credentials are needed to run the app or website. Workflows use GitHub’s automatically provided short-lived token, never a committed personal token. Do not commit `.env` files, private keys, or hosting credentials.
+Found a bug or tried an older Ubuntu release? [Tell us how it went](https://github.com/AfshinKI/PanelTag/issues) — include your Ubuntu and GNOME versions.

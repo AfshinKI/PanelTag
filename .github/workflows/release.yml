@@ -15,6 +15,7 @@ jobs:
       - name: Check version and JavaScript
         run: |
           node --input-type=module --check < extension/extension.js
+          node --check legacy/extension.js
           if [[ "$GITHUB_REF_TYPE" == tag ]]; then
             test "$GITHUB_REF_NAME" = "v$(python3 -c 'import json; print(json.load(open("extension/metadata.json"))["version-name"])')"
           fi
