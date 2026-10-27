@@ -151,7 +151,7 @@ export default class PanelTag extends Extension {
         this.startToggle.insert_child_at_index(new St.Icon({icon_name: 'system-shutdown-symbolic', icon_size: 14, y_align: Clutter.ActorAlign.CENTER}), 0);
         this.button.menu.addMenuItem(this.startToggle);
         const quit = new St.Button({accessible_name: 'Close PanelTag', can_focus: true, style: 'border-radius: 10px; padding: 8px; background-color: rgba(128,128,128,0.15);'});
-        quit.set_child(new St.Icon({icon_name: 'window-close-symbolic', icon_size: 16}));
+        quit.set_child(new St.Icon({icon_name: 'system-shutdown-symbolic', icon_size: 16}));
         quit.connect('clicked', () => {
             this.button.menu.close();
             Gio.Subprocess.new(['gnome-extensions', 'disable', this.uuid], Gio.SubprocessFlags.NONE);
