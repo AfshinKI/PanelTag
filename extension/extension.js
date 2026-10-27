@@ -140,12 +140,6 @@ export default class PanelTag extends Extension {
         this.startToggle.connect('toggled', (_item, value) => this.settings.set_boolean('start-at-login', value));
         this.startToggle.insert_child_at_index(new St.Icon({icon_name: 'system-shutdown-symbolic', icon_size: 14, y_align: Clutter.ActorAlign.CENTER}), 0);
         this.button.menu.addMenuItem(this.startToggle);
-        const reset = new St.Button({accessible_name: 'Reset defaults', can_focus: true, style: 'border-radius: 10px; padding: 8px; background-color: rgba(128,128,128,0.15);'});
-        reset.set_child(new St.Icon({icon_name: 'edit-undo-symbolic', icon_size: 16}));
-        reset.connect('clicked', () => {
-            for (const key of ['label','hostname','icon','color','position','size','style','follow-theme','start-at-login']) this.settings.reset(key);
-        });
-        this.startToggle.add_child(reset);
         const quit = new St.Button({accessible_name: 'Close PanelTag', can_focus: true, style: 'border-radius: 10px; padding: 8px; background-color: rgba(128,128,128,0.15);'});
         quit.set_child(new St.Icon({icon_name: 'window-close-symbolic', icon_size: 16}));
         quit.connect('clicked', () => {
@@ -155,6 +149,7 @@ export default class PanelTag extends Extension {
         this.startToggle.add_child(quit);
         const footer = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
         footer.add_child(new St.Label({text: 'Designed by Afshin K.I.', x_expand: true, x_align: Clutter.ActorAlign.CENTER, style: 'font-size: 10px; color: #92909b;'}));
+        footer.add_child(new St.Label({text: `v${this.metadata['version-name']}`, x_align: Clutter.ActorAlign.END, style: 'font-size: 10px; color: #92909b;'}));
         this.button.menu.addMenuItem(footer);
     }
     refresh() {

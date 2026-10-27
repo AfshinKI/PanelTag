@@ -17,7 +17,7 @@ The website in `site/` mirrors the controls and icons. It is a simulation; left-
 
 ## Releases
 
-Update the numeric version and version-name in `extension/metadata.json` and the download links in the README and website. Push to main. GitHub Actions runs checks, builds the universal .deb and publishes a prerelease with a version tag if it doesn't exist. Published versions are immutable; fixes require a new version. Promote a prerelease only after live desktop testing.
+Update the numeric version and version-name in `extension/metadata.json` and the download links in the README and website. Push to main. GitHub Actions runs checks, builds the universal .deb and publishes a release with a version tag if it doesn't exist. Published versions are immutable; fixes require a new version. Document live desktop validation and known compatibility limits in each release.
 
 Package and mocked input/installer tests are not substitutes for running the extension in each GNOME version. Check hover, clock alignment, distinct icons, startup, Close/reopen and custom colors in live sessions.
 
