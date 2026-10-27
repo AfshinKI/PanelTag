@@ -4,7 +4,7 @@
 
 <p align="center">Designed by <strong>Afshin K.I.</strong></p>
 
-<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.5"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
+<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.6"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
 
 ## Small badge. Plenty of personality.
 
@@ -15,20 +15,20 @@
 - **Place it.** Left, middle, or right, with three text sizes.
 - **Forget about it.** It enables itself at login and remembers your choices.
 
-Right-click the badge for its compact settings menu: icon-only choices, circular colors, and separate rows for position, size and style. Left-click and keyboard activation work too. Hover to see the hostname.
+Right-click the badge for its compact settings menu: icon-only choices, circular colors, and separate rows for position, size and style. Left-click and keyboard activation work too. Hover to see the hostname. The × button beside Reset closes PanelTag for this session. Reopen it from the app launcher; it returns next login if Start at login is enabled.
 
 **Our favorite starting point:** middle · no icon · medium text · system-color outline.
 
 ## One download for Ubuntu GNOME
 
-[**Download PanelTag .deb ↓**](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.5/paneltag_0.2.5_all.deb)
+[**Download PanelTag .deb ↓**](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.6/paneltag_0.2.6_all.deb)
 
 The installer selects the appropriate GNOME engine automatically. Package targets include Ubuntu 20.04, 22.04, 24.04, 26.04 and 26.10 (GNOME 3.36–51). Newer/older versions remain compatibility previews until live-session testing. KDE, Cinnamon and MATE are not supported.
 
 In your download folder:
 
 ```sh
-sudo apt install ./paneltag_0.2.5_all.deb
+sudo apt install ./paneltag_0.2.6_all.deb
 ```
 
 After the first installation, log out and back in. PanelTag discovers and enables itself in your GNOME session. The **Start at login** switch is on by default; switch it off to prevent the badge returning at your next login. Your current badge stays visible. To enable it manually:
@@ -37,7 +37,7 @@ After the first installation, log out and back in. PanelTag discovers and enable
 gnome-extensions enable paneltag@afshinki.github.io
 ```
 
-That’s it — PanelTag returns at future logins. Download checksums from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.5).
+That’s it — PanelTag returns at future logins. Download checksums from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.6).
 
 <details>
 <summary>Taking the badge off?</summary>

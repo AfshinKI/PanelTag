@@ -130,6 +130,13 @@ class PanelTag {
             for (const key of ['label','hostname','icon','color','position','size','style','follow-theme','start-at-login']) this.settings.reset(key);
         });
         this.startToggle.add_child(reset);
+        const quit = new St.Button({accessible_name: 'Close PanelTag', can_focus: true, style: 'border-radius: 10px; padding: 8px; background-color: rgba(128,128,128,0.15);'});
+        quit.set_child(new St.Icon({icon_name: 'window-close-symbolic', icon_size: 16}));
+        quit.connect('clicked', () => {
+            this.button.menu.close();
+            Gio.Subprocess.new(['gnome-extensions', 'disable', this.uuid], Gio.SubprocessFlags.NONE);
+        });
+        this.startToggle.add_child(quit);
         const footer = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
         footer.add_child(new St.Label({text: 'Designed by Afshin K.I.', x_expand: true, x_align: Clutter.ActorAlign.CENTER, style: 'font-size: 10px; color: #92909b;'}));
         this.button.menu.addMenuItem(footer);
