@@ -1,8 +1,21 @@
-const {Gio, Clutter, GLib, St, Pango} = imports.gi;
+const {Gio, GObject, Clutter, GLib, St, Pango} = imports.gi;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
+const PanelTagButton = GObject.registerClass(
+class PanelTagButton extends PanelMenu.Button {
+    vfunc_event(event) {
+        if (event.type() === Clutter.EventType.BUTTON_PRESS) {
+            if (event.get_button() === 3 && this.menu)
+                this.menu.toggle();
+            return Clutter.EVENT_STOP;
+        }
+        // Leave keyboard events to the accessible key handler; taps do not open.
+        return Clutter.EVENT_PROPAGATE;
+    }
+});
+
 class PanelTag {
     constructor() { const ext = ExtensionUtils.getCurrentExtension(); this.uuid = ext.metadata.uuid; this.metadata = ext.metadata; this.path = ext.path; }
     getSettings() { return ExtensionUtils.getSettings('org.gnome.shell.extensions.paneltag'); }
@@ -11,7 +24,7 @@ class PanelTag {
         this.settings = this.getSettings();
         this.interfaceSettings = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
         this.interfaceChanged = this.interfaceSettings.connect('changed', () => this.refresh());
-        this.button = new PanelMenu.Button(0.5, 'PanelTag');
+        this.button = new PanelTagButton(0.5, 'PanelTag');
         this.button.set_style('padding: 0; margin: 0; background-color: transparent; background-image: none; box-shadow: none; border: 0;');
         this.centerSpacer = new St.Widget({reactive: false});
         this.button.container.connect('notify::width', () => {

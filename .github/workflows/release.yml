@@ -16,6 +16,7 @@ jobs:
         run: |
           node --input-type=module --check < extension/extension.js
           node --check legacy/extension.js
+          node tests/test_input.cjs
           node --check extension/color-picker.js
           sh -n packaging/paneltag-login packaging/paneltag-launch packaging/postinst
           python3 tests/test_login.py
