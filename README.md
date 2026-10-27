@@ -2,21 +2,21 @@
 
 <p align="center">A tiny name badge for your Ubuntu top panel.<br>Work, Home, Lab — know which computer you’re using.</p>
 
-<p align="center"><a href="https://afshinki.github.io/PanelTag/">Try the demo</a> · <a href="https://github.com/AfshinKI/PanelTag/releases/download/v0.3.0/paneltag_0.3.0_all.deb">Download .deb</a></p>
+<p align="center"><a href="https://afshinki.github.io/PanelTag/">Try the demo</a> · <a href="https://github.com/AfshinKI/PanelTag/releases/download/v0.3.1/paneltag_0.3.1_all.deb">Download .deb</a></p>
 
 ## Install
 
 Download the package, then run this in your Downloads folder:
 
 ```sh
-sudo apt install ./paneltag_0.3.0_all.deb
+sudo apt install ./paneltag_0.3.1_all.deb
 ```
 
 One installer for Ubuntu’s GNOME desktop. Search for **PanelTag** in your apps to open it. If the badge doesn’t appear, log out and back in once. Do the same after upgrading to load the new version.
 
 ## Make it yours
 
-**Right-click the badge** to change its name, color, icon, size, and position.
+**Right-click the badge** to change its name, color, icon, size, and position. Click **PanelTag** at the top of the menu to visit the website.
 
 - It follows your system color by default.
 - **Start at login** brings it back automatically.

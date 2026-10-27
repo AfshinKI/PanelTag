@@ -94,11 +94,21 @@ export default class PanelTag extends Extension {
     buildMenu() {
         this.choiceGroups = [];
         this.button.menu.box.set_style("padding: 8px; spacing: 2px; border-radius: 16px; font-size: 12px;");
-        const heading = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
+        const heading = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
         const wordmark = new St.BoxLayout();
         wordmark.add_child(new St.Label({text: 'PanelTag', style: 'font-weight: bold;'}));
         wordmark.add_child(new St.Label({text: '.', style: 'font-weight: bold; color: #3584e4;'}));
-        heading.add_child(wordmark);
+        const website = new St.Button({can_focus: true, accessible_name: 'PanelTag — open website', style: 'padding: 3px; border-radius: 6px;'});
+        website.set_child(wordmark);
+        website.connect('clicked', () => {
+            this.button.menu.close();
+            try {
+                Gio.AppInfo.launch_default_for_uri('https://afshinki.github.io/PanelTag/', null);
+            } catch (error) {
+                logError(error, 'PanelTag: unable to open website');
+            }
+        });
+        heading.add_child(website);
         this.button.menu.addMenuItem(heading);
         const row = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
         row.add_child(new St.Label({text: 'Name', y_align: Clutter.ActorAlign.CENTER}));
