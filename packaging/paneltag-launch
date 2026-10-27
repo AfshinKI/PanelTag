@@ -1,0 +1,17 @@
+#!/bin/sh
+# Always run in the desktop user's session, not as root.
+uuid=paneltag@afshinki.github.io
+schemas=/usr/share/gnome-shell/extensions/$uuid/schemas
+if [ "$(id -u)" = 0 ]; then
+    echo 'Run PanelTag as your desktop user, without sudo.' >&2
+    exit 1
+fi
+if [ "${1:-}" = --after-install ]; then
+    setting=$(gsettings --schemadir "$schemas" get org.gnome.shell.extensions.paneltag start-at-login 2>/dev/null) || exit 0
+    [ "$setting" = true ] || exit 0
+fi
+if gnome-extensions enable "$uuid" >/dev/null 2>&1; then
+    notify-send -i paneltag PanelTag 'PanelTag enabled. Right-click your panel badge to customize it.' || true
+else
+    notify-send -i paneltag PanelTag 'Installation is ready. Log out and back in once so GNOME can discover PanelTag. It will then start automatically.' || true
+fi

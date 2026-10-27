@@ -17,8 +17,9 @@ jobs:
           node --input-type=module --check < extension/extension.js
           node --check legacy/extension.js
           node --check extension/color-picker.js
-          sh -n packaging/paneltag-login
+          sh -n packaging/paneltag-login packaging/paneltag-launch packaging/postinst
           python3 tests/test_login.py
+          python3 tests/test_install.py
           if [[ "$GITHUB_REF_TYPE" == tag ]]; then
             test "$GITHUB_REF_NAME" = "v$(python3 -c 'import json; print(json.load(open("extension/metadata.json"))["version-name"])')"
           fi

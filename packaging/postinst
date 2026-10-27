@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+# Select the JS module format required by the installed shell. Re-run when
+# GNOME Shell is upgraded, via the package file trigger.
+if [ "${1:-}" = configure ] || [ "${1:-}" = triggered ]; then
+    shell_version=$(gnome-shell --version | awk '{print $NF}' | cut -d. -f1)
+    case "$shell_version" in ''|*[!0-9]*) echo 'Cannot detect GNOME Shell version' >&2; exit 1;; esac
+    engine=modern
+    if [ "$shell_version" -lt 45 ]; then engine=legacy; fi
+    install -m 644 "/usr/share/paneltag/$engine.js" /usr/share/gnome-shell/extensions/paneltag@afshinki.github.io/extension.js
+fi
+# Best effort activation for the user who invoked sudo apt. Do not guess a user
+# during unattended/graphical installations or run desktop code as root.
+if [ "${1:-}" = configure ]; then
+    case "${SUDO_UID:-}" in ''|*[!0-9]*) exit 0;; esac
+    if [ "$SUDO_UID" -ge 1000 ] && [ -S "/run/user/$SUDO_UID/bus" ]; then
+        account=$(getent passwd "$SUDO_UID" | cut -d: -f1)
+        if [ -n "$account" ]; then
+            timeout 10 runuser -u "$account" -- env XDG_RUNTIME_DIR="/run/user/$SUDO_UID" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$SUDO_UID/bus" /usr/bin/paneltag-launch --after-install || true
+        fi
+    fi
+fi
+exit 0

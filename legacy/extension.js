@@ -12,6 +12,11 @@ class PanelTag {
         this.interfaceSettings = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
         this.interfaceChanged = this.interfaceSettings.connect('changed', () => this.refresh());
         this.button = new PanelMenu.Button(0.5, 'PanelTag');
+        this.button.set_style('padding: 0; margin: 0; background-color: transparent; background-image: none; box-shadow: none; border: 0;');
+        this.centerSpacer = new St.Widget({reactive: false});
+        this.button.container.connect('notify::width', () => {
+            if (this.centerSpacer) this.centerSpacer.width = this.button.container.width;
+        });
         this.box = new St.BoxLayout({y_align: Clutter.ActorAlign.CENTER, style_class: 'paneltag-badge'});
         this.icon = new St.Icon({icon_size: 12, y_align: Clutter.ActorAlign.CENTER});
         this.label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
@@ -63,7 +68,7 @@ class PanelTag {
         const symbols = {none:'−',computer:'▣',laptop:'▱',server:'▤',left:'⇤',center:'↔',right:'⇥',filled:'●',outline:'○',text:'T',11:'a',12:'A',14:'A'};
         const items = options.map(([label, value]) => {
             const item = new St.Button({label: key === 'icon' ? (symbols[value] || label) : `${symbols[value]} ${label}`, x_expand: true, accessible_name: `${title}: ${label}`, can_focus: true});
-            if (key === 'icon' && value !== 'none') item.set_child(new St.Icon({icon_name: {computer:'computer-symbolic',laptop:'computer-laptop-symbolic',server:'network-server-symbolic'}[value], icon_size: 14}));
+            if (key === 'icon' && value !== 'none') item.set_child(new St.Icon({gicon: Gio.FileIcon.new(Gio.File.new_for_path(`${this.path}/icons/${value}-symbolic.svg`)), icon_size: 14}));
             item.connect('clicked', () => integer ? this.settings.set_int(key, value) : this.settings.set_string(key, value));
             buttons.add_child(item);
             return {item, value, label};
@@ -89,7 +94,7 @@ class PanelTag {
         row.add_child(this.entry);
         this.button.menu.addMenuItem(row);
         this.hostToggle = new St.Button({accessible_name: 'Use computer name', can_focus: true});
-        this.hostToggle.set_child(new St.Icon({icon_name: 'computer-symbolic', icon_size: 14}));
+        this.hostToggle.set_child(new St.Icon({gicon: Gio.FileIcon.new(Gio.File.new_for_path(`${this.path}/icons/computer-symbolic.svg`)), icon_size: 14}));
         this.hostToggle.connect('clicked', () => this.settings.set_boolean('hostname', !this.settings.get_boolean('hostname')));
         row.add_child(this.hostToggle);
         this.choices('Icon', 'icon', [['None','none'],['Computer','computer'],['Laptop','laptop'],['Server','server']]);
@@ -101,7 +106,7 @@ class PanelTag {
             const button = new St.Button({label: value === 'system' ? '◐' : '', accessible_name: label, can_focus: true});
             button.connect('clicked', () => {
                 if (value === 'custom') {
-                    const gtk = this.metadata['shell-version'].includes('3.36') ? '3.0' : '4.0';
+                    const gtk = '3.0';
                     Gio.Subprocess.new(['gjs', `${this.path}/color-picker.js`, gtk, `${this.path}/schemas`], Gio.SubprocessFlags.NONE);
                     this.button.menu.close();
                 } else if (value === 'system') this.settings.set_boolean('follow-theme', true);
@@ -154,7 +159,7 @@ class PanelTag {
         }
         const icon = s.get_string('icon');
         this.icon.visible = icon !== 'none';
-        this.icon.icon_name = {computer:'computer-symbolic', laptop:'computer-laptop-symbolic', server:'network-server-symbolic'}[icon] || 'computer-symbolic';
+        this.icon.gicon = Gio.FileIcon.new(Gio.File.new_for_path(`${this.path}/icons/${icon === 'none' ? 'computer' : icon}-symbolic.svg`));
         const rgb = color.slice(1).match(/../g).map(x => parseInt(x,16)/255).map(x => x <= 0.04045 ? x/12.92 : ((x+0.055)/1.055)**2.4);
         const ink = rgb[0]*0.2126+rgb[1]*0.7152+rgb[2]*0.0722 > 0.179 ? '#000000' : '#ffffff';
         const style = s.get_string('style');
@@ -165,7 +170,13 @@ class PanelTag {
             const target = {left:Main.panel._leftBox, center:Main.panel._centerBox, right:Main.panel._rightBox}[position];
             const actor = this.button.container;
             if (actor.get_parent()) actor.get_parent().remove_child(actor);
+            const spacerParent = this.centerSpacer.get_parent();
+            if (spacerParent) spacerParent.remove_child(this.centerSpacer);
             target.insert_child_at_index(actor, 0);
+            if (position === 'center') {
+                this.centerSpacer.width = actor.width;
+                target.add_child(this.centerSpacer);
+            }
             this.position = position;
         }
         for (const group of this.choiceGroups) {
@@ -183,6 +194,8 @@ class PanelTag {
         this.syncing = false;
     }
     disable() {
+        if (this.centerSpacer) this.centerSpacer.destroy();
+        this.centerSpacer = null;
         if (this.themeChanged) this.themeContext.disconnect(this.themeChanged);
         this.themeChanged = 0;
         this.themeContext = null;

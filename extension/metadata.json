@@ -3,10 +3,23 @@
   "name": "PanelTag",
   "description": "A small, customizable machine badge for your top panel.",
   "shell-version": [
-    "46"
+    "3.36",
+    "3.38",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50",
+    "51"
   ],
-  "version": 7,
-  "version-name": "0.2.4",
+  "version": 8,
+  "version-name": "0.2.5",
   "settings-schema": "org.gnome.shell.extensions.paneltag",
   "url": "https://github.com/AfshinKI/PanelTag"
 }

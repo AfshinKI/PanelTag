@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=PanelTag
+Comment=Show your computer badge in the top panel
+Exec=/usr/bin/paneltag-launch
+Icon=paneltag
+Terminal=false
+Categories=Utility;Settings;
+Keywords=badge;computer;name;label;panel;tag;
+OnlyShowIn=GNOME;
+StartupNotify=false

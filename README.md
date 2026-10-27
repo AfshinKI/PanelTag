@@ -4,7 +4,7 @@
 
 <p align="center">Designed by <strong>Afshin K.I.</strong></p>
 
-<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.4"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
+<p align="center"><a href="https://afshinki.github.io/PanelTag/"><strong>🎨 Play with the demo</strong></a> &nbsp; · &nbsp; <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.5"><strong>↓ Get PanelTag</strong></a> &nbsp; · &nbsp; <a href="LICENSE">MIT licensed</a></p>
 
 ## Small badge. Plenty of personality.
 
@@ -17,22 +17,18 @@
 
 Right-click the badge for its compact settings menu: icon-only choices, circular colors, and separate rows for position, size and style. Left-click and keyboard activation work too. Hover to see the hostname.
 
-**Our favorite starting point:** middle · no icon · medium text · blue outline.
+**Our favorite starting point:** middle · no icon · medium text · system-color outline.
 
-## Pick your Ubuntu
+## One download for Ubuntu GNOME
 
-| Desktop | GNOME | Download |
-| --- | --- | --- |
-| Ubuntu 24.04 | 46 | [24.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.4/paneltag_0.2.4_ubuntu24.04_all.deb) |
-| Ubuntu 22.04 | 42 | [22.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.4/paneltag_0.2.4_ubuntu22.04_all.deb) |
-| Ubuntu 20.04 | 3.36 | [20.04 package](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.4/paneltag_0.2.4_ubuntu20.04_all.deb) |
+[**Download PanelTag .deb ↓**](https://github.com/AfshinKI/PanelTag/releases/download/v0.2.5/paneltag_0.2.5_all.deb)
 
-> **Compatibility preview:** packages target the default GNOME desktop on these releases. Build, schema and package checks pass; live-session testing is still pending, especially on the older releases. KDE, Cinnamon, MATE and other desktops are not supported. Choose by your installed GNOME version if you have customized Ubuntu.
+The installer selects the appropriate GNOME engine automatically. Package targets include Ubuntu 20.04, 22.04, 24.04, 26.04 and 26.10 (GNOME 3.36–51). Newer/older versions remain compatibility previews until live-session testing. KDE, Cinnamon and MATE are not supported.
 
-In your download folder, install the matching file. For Ubuntu 24.04:
+In your download folder:
 
 ```sh
-sudo apt install ./paneltag_0.2.4_ubuntu24.04_all.deb
+sudo apt install ./paneltag_0.2.5_all.deb
 ```
 
 After the first installation, log out and back in. PanelTag discovers and enables itself in your GNOME session. The **Start at login** switch is on by default; switch it off to prevent the badge returning at your next login. Your current badge stays visible. To enable it manually:
@@ -41,7 +37,7 @@ After the first installation, log out and back in. PanelTag discovers and enable
 gnome-extensions enable paneltag@afshinki.github.io
 ```
 
-That’s it — PanelTag returns at future logins. Download checksums and extension ZIPs from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.4).
+That’s it — PanelTag returns at future logins. Download checksums from the [release page](https://github.com/AfshinKI/PanelTag/releases/tag/v0.2.5).
 
 <details>
 <summary>Taking the badge off?</summary>
@@ -58,13 +54,13 @@ The website is a browser preview, not a running GNOME session. The app and demo 
 
 ## For the curious 🛠️
 
-Build with Python 3, GLib tools, dpkg-deb and zip:
+Build with Python 3, GLib tools and dpkg-deb:
 
 ```sh
 bash scripts/build.sh
 ```
 
-This builds three version-specific `.deb` files and extension ZIPs, plus checksums under `dist/`. The legacy implementation in `legacy/` supports GNOME’s pre-45 loader; `extension/` uses the modern ES-module loader. Package dependencies prevent installing the wrong build for the running GNOME version.
+This builds one universal `.deb` and its checksum under `dist/`. The package selects `legacy/` for GNOME before 45 and `extension/` for GNOME 45–51. A package trigger refreshes that choice when GNOME Shell is upgraded.
 
 To release: update both version fields in `extension/metadata.json`, update download links, and merge to `main`. CI builds packages, creates the matching version tag and publishes a prerelease if it does not exist. Explicit version tags also work. Promote releases after live desktop testing.
 
@@ -73,3 +69,8 @@ To release: update both version fields in `extension/metadata.json`, update down
 [MIT licensed](LICENSE). No account, API keys, analytics, external scripts, or backend are needed. Settings stay local. GitHub Pages publishes `site/`; GitHub Actions uses its automatic short-lived token, not a committed personal token. Credential files are ignored by Git.
 
 Found a bug or tried an older Ubuntu release? [Tell us how it went](https://github.com/AfshinKI/PanelTag/issues) — include your Ubuntu and GNOME versions.
+
+### One installer
+The universal `.deb` selects legacy or modern GNOME code at install time and after GNOME Shell upgrades. It targets GNOME 3.36–51, including Ubuntu 20.04, 22.04, 24.04, 26.04 (GNOME 50) and 26.10 (GNOME 51). Compatibility on newer releases is a preview until tested in live sessions.
+
+Search for **PanelTag** in your apps to enable it. Installation through `sudo apt` attempts activation in the invoking user's running session; graphical and unattended installers may require opening the launcher. A newly discovered extension still requires one logout/login on GNOME. The installer never restarts your session.

@@ -7,48 +7,38 @@ uuid=paneltag@afshinki.github.io
 mkdir -p dist
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
-artifacts=()
-for target in '20.04:3.36:3.37:legacy' '22.04:42:43:legacy' '24.04:46:47:extension'; do
-  IFS=: read -r ubuntu shell ceiling source <<< "$target"
-  pkg="$stage/$ubuntu"
-  ext="$pkg/usr/share/gnome-shell/extensions/$uuid"
-  mkdir -p "$ext/schemas" "$pkg/DEBIAN" "$pkg/usr/share/doc/paneltag"
-  cp "$source/extension.js" "$ext/"
-  cp extension/color-picker.js extension/color-wheel.svg "$ext/"
-  mkdir -p "$pkg/etc/xdg/autostart" "$pkg/usr/bin"
-  cp packaging/paneltag.desktop "$pkg/etc/xdg/autostart/"
-  install -m 755 packaging/paneltag-login "$pkg/usr/bin/paneltag-login"
-  gtk=4.0
-  if [ "$ubuntu" = 20.04 ]; then gtk=3.0; fi
-  cp extension/schemas/*.xml "$ext/schemas/"
-  mkdir -p "$pkg/usr/share/icons/hicolor/scalable/apps"
-  cp site/paneltag.svg "$pkg/usr/share/icons/hicolor/scalable/apps/paneltag.svg"
-  cp LICENSE "$pkg/usr/share/doc/paneltag/copyright"
-  python3 - "$shell" "$ext/metadata.json" <<'PY'
-import json,sys
-m=json.load(open('extension/metadata.json')); m['shell-version']=[sys.argv[1]]
-with open(sys.argv[2],'w') as f: json.dump(m,f,indent=2)
-PY
-  glib-compile-schemas --strict "$ext/schemas"
-  cat > "$pkg/DEBIAN/control" <<CONTROL
+pkg="$stage/package"
+ext="$pkg/usr/share/gnome-shell/extensions/$uuid"
+mkdir -p "$ext/schemas" "$pkg/DEBIAN" "$pkg/usr/share/doc/paneltag" "$pkg/usr/share/paneltag" "$pkg/usr/bin" "$pkg/etc/xdg/autostart" "$pkg/usr/share/applications" "$pkg/usr/share/icons/hicolor/scalable/apps"
+cp extension/extension.js "$ext/"
+cp extension/extension.js "$pkg/usr/share/paneltag/modern.js"
+cp legacy/extension.js "$pkg/usr/share/paneltag/legacy.js"
+cp extension/metadata.json extension/color-picker.js extension/color-wheel.svg "$ext/"
+cp -r extension/icons "$ext/"
+cp extension/schemas/*.xml "$ext/schemas/"
+glib-compile-schemas --strict "$ext/schemas"
+cp packaging/paneltag.desktop "$pkg/etc/xdg/autostart/"
+cp packaging/paneltag-app.desktop "$pkg/usr/share/applications/paneltag.desktop"
+install -m 755 packaging/paneltag-login packaging/paneltag-launch "$pkg/usr/bin/"
+install -m 755 packaging/postinst "$pkg/DEBIAN/postinst"
+printf '%s\n' 'interest-noawait /usr/bin/gnome-shell' > "$pkg/DEBIAN/triggers"
+cp site/paneltag.svg "$pkg/usr/share/icons/hicolor/scalable/apps/paneltag.svg"
+cp LICENSE "$pkg/usr/share/doc/paneltag/copyright"
+cat > "$pkg/DEBIAN/control" <<CONTROL
 Package: paneltag
 Version: $version
 Architecture: all
 Maintainer: AfshinKI <noreply@github.com>
-Depends: gnome-shell (>= $shell), gnome-shell (<< $ceiling), gjs, gir1.2-gtk-$gtk
+Depends: gnome-shell (>= 3.36), gnome-shell (<< 52), gjs, libnotify-bin, gir1.2-gtk-3.0
 Section: gnome
 Priority: optional
 Homepage: https://github.com/AfshinKI/PanelTag
-Description: Customizable machine badge for Ubuntu $ubuntu GNOME
- A small persistent badge with a compact settings menu.
+Description: A customizable machine badge for the GNOME top panel
+ Automatically selects the extension engine for your GNOME version.
 CONTROL
-  chmod 755 "$pkg"
-  chmod -R go-w "$pkg"
-  deb="paneltag_${version}_ubuntu${ubuntu}_all.deb"
-  archive="paneltag_${version}_ubuntu${ubuntu}.zip"
-  dpkg-deb --root-owner-group --build "$pkg" "$root/dist/$deb"
-  (cd "$ext" && zip -qr "$stage/$archive" .)
-  cp "$stage/$archive" "$root/dist/$archive"
-  artifacts+=("$deb" "$archive")
-done
-(cd dist && sha256sum "${artifacts[@]}" > SHA256SUMS)
+size=$(du -sk "$pkg/usr" "$pkg/etc" | awk '{s+=$1} END {print s}')
+printf 'Installed-Size: %s\n' "$size" >> "$pkg/DEBIAN/control"
+chmod -R go-w "$pkg"
+deb="paneltag_${version}_all.deb"
+dpkg-deb --root-owner-group --build "$pkg" "$root/dist/$deb"
+(cd dist && sha256sum "$deb" > SHA256SUMS)
