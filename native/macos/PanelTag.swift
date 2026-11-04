@@ -1,6 +1,7 @@
 import AppKit
 import ServiceManagement
 import SwiftUI
+import Combine
 
 final class PanelTag: NSObject, NSApplicationDelegate, ObservableObject {
     let objectWillChange = ObservableObjectPublisher()

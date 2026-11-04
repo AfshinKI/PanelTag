@@ -171,7 +171,7 @@ export default class PanelTag extends Extension {
         this.entry.set_text(s.get_boolean('hostname') ? GLib.get_host_name() : s.get_string('label'));
         this.entry.reactive = !s.get_boolean('hostname');
         this.entry.clutter_text.editable = !s.get_boolean('hostname');
-        this.hostToggle.set_style(`border-radius: 8px; padding: 7px; background-color: ${s.get_boolean('hostname') ? 'rgba(100,140,235,0.35)' : 'rgba(128,128,128,0.15)'};`);
+        this.hostToggle.set_style(`border-radius: 8px; padding: 7px; background-color: ${s.get_boolean('hostname') ? 'rgba(112,70,184,0.22)' : 'rgba(128,128,128,0.15)'};`);
         let color = s.get_string('color');
         if (!/^#[0-9a-f]{6}$/i.test(color)) color = '#3584e4';
         this.startToggle.setToggleState(s.get_boolean('start-at-login'));
@@ -210,7 +210,7 @@ export default class PanelTag extends Extension {
         for (const group of this.choiceGroups) {
             const value = group.integer ? s.get_int(group.key) : s.get_string(group.key);
             for (const entry of group.items) {
-                entry.item.set_style(`border-radius: 7px; padding: 4px 10px; font-size: ${group.integer ? entry.value : (group.key === 'icon' ? 14 : 11)}px; background-color: ${entry.value === value ? 'rgba(100,140,235,0.35)' : 'rgba(128,128,128,0.15)'}; border: 1px solid ${entry.value === value ? '#7399e8' : 'transparent'};`);
+                entry.item.set_style(`border-radius: 7px; padding: 4px 10px; font-size: ${group.integer ? entry.value : (group.key === 'icon' ? 14 : 11)}px; background-color: ${entry.value === value ? 'rgba(112,70,184,0.22)' : 'rgba(128,128,128,0.15)'}; border: 1px solid ${entry.value === value ? '#a888d2' : 'transparent'};`);
             }
         }
         for (const swatch of this.swatches) {
