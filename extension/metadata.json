@@ -18,8 +18,8 @@
     "50",
     "51"
   ],
-  "version": 14,
-  "version-name": "0.3.2",
+  "version": 15,
+  "version-name": "0.4.0",
   "settings-schema": "org.gnome.shell.extensions.paneltag",
   "url": "https://github.com/AfshinKI/PanelTag"
 }

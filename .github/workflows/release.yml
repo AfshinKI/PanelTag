@@ -1,22 +1,23 @@
 name: Build and release
 on:
   push:
-    branches: [main]
+    branches: [main, 'release/**']
     tags: ['v*']
   pull_request:
 permissions:
   contents: read
 jobs:
-  build:
+  linux:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y libglib2.0-bin zip
-      - name: Check version and JavaScript
+      - name: Check Linux and website
         run: |
           node --input-type=module --check < extension/extension.js
           node --check legacy/extension.js
           node tests/test_input.cjs
+          node tests/test_downloads.cjs
           node --check extension/color-picker.js
           sh -n packaging/paneltag-login packaging/paneltag-launch packaging/postinst
           python3 tests/test_login.py
@@ -27,11 +28,48 @@ jobs:
       - run: bash scripts/build.sh
       - uses: actions/upload-artifact@v4
         with:
-          name: paneltag-packages
-          path: dist/*
+          name: linux-package
+          path: dist/*.deb
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/build-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-package
+          path: dist/*.dmg
+  windows:
+    runs-on: windows-2025
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build Windows app
+        shell: pwsh
+        run: |
+          $version = (Get-Content extension/metadata.json | ConvertFrom-Json).'version-name'
+          dotnet publish native/windows/PanelTag.csproj -c Release -r win-${{ matrix.arch }} -p:Version=$version -o build/windows-${{ matrix.arch }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ('${{ matrix.arch }}' -eq 'x64') {
+            $process = Start-Process build/windows-x64/PanelTag.exe -ArgumentList '--smoke-test' -PassThru
+            if (!$process.WaitForExit(60000)) { $process.Kill(); throw 'Smoke test timed out' }
+            if ($process.ExitCode -ne 0) { throw "Smoke test failed: $($process.ExitCode)" }
+          }
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$version" "/DArch=${{ matrix.arch }}" native/windows/installer.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ matrix.arch }}-package
+          path: dist/*.exe
   release:
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main'
-    needs: build
+    needs: [linux, macos, windows]
     permissions:
       contents: write
     runs-on: ubuntu-24.04
@@ -39,17 +77,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: paneltag-packages
+          pattern: '*-package'
+          merge-multiple: true
           path: dist
-      - name: Publish release
+      - name: Publish complete release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="$GITHUB_REF_NAME"
-          if [[ "$GITHUB_REF_TYPE" != tag ]]; then
-            version=$(python3 -c 'import json; print(json.load(open("extension/metadata.json"))["version-name"])')
-            # Publish a new version only once; its tag points to this exact commit.
-            tag="v$version"
-            gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 && exit 0
-          fi
-          gh release create "$tag" dist/* --target "$GITHUB_SHA" --repo "$GITHUB_REPOSITORY" --generate-notes --title "PanelTag $tag"
+          version=$(python3 -c 'import json; print(json.load(open("extension/metadata.json"))["version-name"])')
+          tag="v$version"
+          test -f "dist/paneltag_${version}_all.deb"
+          test -f "dist/PanelTag-${version}-macos-universal.dmg"
+          test -f "dist/PanelTag-${version}-windows-x64-setup.exe"
+          test -f "dist/PanelTag-${version}-windows-arm64-setup.exe"
+          (cd dist && sha256sum *.deb *.dmg *.exe > SHA256SUMS)
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 && exit 0
+          gh release create "$tag" dist/* --target "$GITHUB_SHA" --repo "$GITHUB_REPOSITORY" --notes-file docs/RELEASE.md --title "PanelTag $tag"

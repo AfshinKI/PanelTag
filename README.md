@@ -1,28 +1,22 @@
 <p align="center"><img src="docs/banner.svg" alt="PanelTag — a little label for your computer" width="1000"></p>
 
-<p align="center">A tiny name badge for your Ubuntu top panel.<br>Work, Home, Lab — know which computer you’re using.</p>
+<p align="center">Work, Home, Lab — know which computer you’re using.<br>A little badge for Ubuntu, macOS, and Windows.</p>
 
-<p align="center"><a href="https://afshinki.github.io/PanelTag/">Try the demo</a> · <a href="https://github.com/AfshinKI/PanelTag/releases/download/v0.3.2/paneltag_0.3.2_all.deb">Download .deb</a></p>
+<p align="center"><a href="https://afshinki.github.io/PanelTag/">See it & download</a> · <a href="https://github.com/AfshinKI/PanelTag/releases/tag/v0.4.0">All downloads</a></p>
 
 ## Install
 
-Download the package, then run this in your Downloads folder:
+- **Ubuntu GNOME:** download the `.deb`, then run `sudo apt install ./paneltag_0.4.0_all.deb`. Log out and back in if needed.
+- **macOS 13+:** open the universal `.dmg`, drag PanelTag to Applications, then open it. Works on Intel and Apple silicon.
+- **Windows:** run the x64 or ARM64 installer and launch PanelTag. It shows a floating badge and a tray icon.
 
-```sh
-sudo apt install ./paneltag_0.3.2_all.deb
-```
-
-One installer for Ubuntu’s GNOME desktop. Search for **PanelTag** in your apps to open it. If the badge doesn’t appear, log out and back in once. Do the same after upgrading to load the new version.
+The first Mac and Windows releases are not signed with publisher certificates. macOS or Windows may show a security prompt. See the [release notes](https://github.com/AfshinKI/PanelTag/releases/tag/v0.4.0) for installation details and testing limits.
 
 ## Make it yours
 
-**Right-click the badge** to change its name, color, icon, size, and position. Click **PanelTag** at the top of the menu to visit the website.
+**Right-click the badge** to change its name, color, icon, text size, and style. It follows your system accent by default. Turn **Start at login** on or off in the menu; **Quit PanelTag** closes it for the current session.
 
-- It follows your system color by default.
-- **Start at login** brings it back automatically.
-- **× Close** hides it until you reopen it or log in again with startup enabled.
-
-Targets GNOME 3.36–51, including Ubuntu 20.04, 22.04, 24.04, 26.04 and 26.10. Not every desktop version has been live-tested. KDE and other non-GNOME desktops aren’t supported.
+Ubuntu and Windows offer left/middle/right placement. On Mac, hold Command and drag the badge within the menu bar.
 
 Free and open source. No account or tracking. Designed by **Afshin K.I.**
 
