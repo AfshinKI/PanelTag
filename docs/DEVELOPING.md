@@ -37,7 +37,7 @@ Repeat with `win-arm64` and `Arch=arm64`. Each setup bundles a self-contained ru
 
 ## Website and releases
 
-`site/` is a static website with an automatic, noninteractive GNOME demonstration. `downloads.js` detects OS locally, optionally reads browser architecture hints, and provides a manual override. No analytics or server API. Unknown/mobile platforms get a platform picker rather than an incorrect download.
+`site/` is a static website with automatic, noninteractive Linux, macOS, and Windows demonstrations. `downloads.js` detects OS locally, optionally reads browser architecture hints, and provides a manual override. No analytics or server API. Unknown/mobile platforms default to the Linux preview. Compact platform buttons synchronize the preview and download; Windows processor buttons select x64 or ARM64.
 
 Update `extension/metadata.json`, `site/downloads.js`, website and README versions, and `docs/RELEASE.md`. Push a `release/**` branch to validate all platforms without publishing. Main builds the same checks, waits for every installer, then publishes one release with checksums. Pages deploys after a successful main release workflow. No signing credentials are stored in the repository. CI uses GitHub's automatic token.
 

@@ -21,12 +21,33 @@ for (const p of Object.values(packages)) { assert.ok(p.file.includes(metadata['v
 // Exercise DOM wiring and a manual override before async architecture hints arrive.
 const elements = new Map();
 function element(id) { if(!elements.has(id)) elements.set(id,{addEventListener(name,fn){this[name]=fn;},hidden:false,value:'',textContent:''});return elements.get(id); }
-let finishHints;
-const context = {document:{getElementById:element},navigator:{platform:'Win32',userAgent:'Windows NT 10.0',maxTouchPoints:0,userAgentData:{platform:'Windows',getHighEntropyValues(){return new Promise(resolve=>{finishHints=resolve;});}}}};
+function makeButton(dataset){return {dataset,attrs:{},setAttribute(k,v){this.attrs[k]=v;},addEventListener(k,fn){this[k]=fn;}};}
+const platformButtons=['linux','macos','windows','linux','macos','windows'].map(platform=>makeButton({platform}));
+const archButtons=['x64','arm64'].map(architecture=>makeButton({architecture}));
+let finishHints, demoPlatform;
+const document={getElementById:element,querySelectorAll(selector){return selector==='[data-platform]'?platformButtons:archButtons;}};
+const context = {document,PanelTagDemo:{setPlatform(value){demoPlatform=value;}},navigator:{platform:'Win32',userAgent:'Windows NT 10.0',maxTouchPoints:0,userAgentData:{platform:'Windows',getHighEntropyValues(){return new Promise(resolve=>{finishHints=resolve;});}}}};
 vm.runInNewContext(fs.readFileSync('site/downloads.js','utf8'),context);
 assert.match(element('package-link').href,/windows-x64/);
-element('download-os').change({target:{value:'macos'}});
+assert.equal(demoPlatform,'windows');
+platformButtons[1].click();
+assert.equal(demoPlatform,'macos');
+assert.equal(platformButtons[4].attrs['aria-pressed'],'true');
 finishHints({architecture:'arm',bitness:'64'});
-setImmediate(()=>{assert.match(element('package-link').href,/macos-universal/);assert.equal(element('command-box').hidden,true); console.log('OS detection, package versions, and manual override passed');});
+setImmediate(()=>{
+ assert.match(element('package-link').href,/macos-universal/);
+ assert.equal(element('command-box').hidden,true);
+ platformButtons[2].click();archButtons[1].click();
+ assert.match(element('package-link').href,/windows-arm64/);
+ assert.equal(demoPlatform,'windows');
+ platformButtons[0].click();
+ assert.match(element('package-link').href,/all.deb/);
+ assert.equal(demoPlatform,'linux');
+ assert.equal(element('command-box').hidden,false);
+ vm.runInNewContext(fs.readFileSync('site/downloads.js','utf8'),{document,PanelTagDemo:{setPlatform(value){demoPlatform=value;}},navigator:{platform:'',userAgent:''}});
+ assert.equal(demoPlatform,'linux');
+ assert.match(element('package-link').href,/all.deb/);
+ console.log('OS detection, platform buttons, ARM selection, manual override, and Linux fallback passed');
+});
 const html=fs.readFileSync('site/index.html','utf8');
 for(const match of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
