@@ -90,7 +90,7 @@ class PanelTag {
     }
     buildMenu() {
         this.choiceGroups = [];
-        this.button.menu.box.set_style("padding: 8px; spacing: 2px; border-radius: 16px; font-size: 12px;");
+        this.button.menu.box.set_style("width: 280px; padding: 8px; spacing: 2px; border-radius: 16px; font-size: 12px;");
         const heading = new PopupMenu.PopupBaseMenuItem({activate: false, can_focus: false});
         const wordmark = new St.BoxLayout();
         wordmark.add_child(new St.Label({text: 'PanelTag', style: 'font-weight: bold;'}));

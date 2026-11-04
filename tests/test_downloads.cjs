@@ -36,7 +36,8 @@ assert.equal(platformButtons[4].attrs['aria-pressed'],'true');
 finishHints({architecture:'arm',bitness:'64'});
 setImmediate(()=>{
  assert.match(element('package-link').href,/macos-universal/);
- assert.equal(element('command-box').hidden,true);
+ assert.equal(element('command-box').hidden,false);
+ assert.match(element('install-command').textContent,/--allow-unsigned/);
  platformButtons[2].click();archButtons[1].click();
  assert.match(element('package-link').href,/windows-arm64/);
  assert.equal(demoPlatform,'windows');
